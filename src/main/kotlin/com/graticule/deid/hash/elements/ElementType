@@ -1,0 +1,13 @@
+package com.graticule.deid.hash.elements
+
+enum class ElementType {
+    FIRST_NAME,
+    FIRST_3_FIRST_NAME,
+    LAST_NAME,
+    FIRST_3_LAST_NAME,
+    BIRTH_YEAR,
+    BIRTH_DAY,
+    BIRTH_MONTH,
+    DOB,
+    SSN
+}

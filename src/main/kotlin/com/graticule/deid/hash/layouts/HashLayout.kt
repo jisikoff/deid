@@ -1,8 +1,7 @@
 package com.graticule.deid.hash.layouts
 
-import com.graticule.deid.hash.elements.HashElement
-import kotlin.reflect.KClass
+import com.graticule.deid.hash.elements.ElementType
 
-open class HashLayout(val name:String, vararg val elements: KClass<out HashElement>) {
+open class HashLayout(val name:String, val layout: List<ElementType>) {
 
 }

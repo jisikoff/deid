@@ -2,7 +2,7 @@ package com.graticule.deid.hash.elements
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-class FirstNameElementTest {
+class HashElementTest {
 
     @Test
     fun testFirstNameElement() {
