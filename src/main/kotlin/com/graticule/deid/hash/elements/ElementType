@@ -8,6 +8,5 @@ enum class ElementType {
     BIRTH_YEAR,
     BIRTH_DAY,
     BIRTH_MONTH,
-    DOB,
     SSN
 }
