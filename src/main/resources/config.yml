@@ -1,0 +1,58 @@
+layouts:
+  - name: FNLNDOB
+    layout: ['FIRST_NAME', 'LAST_NAME', 'BIRTH_YEAR', 'BIRTH_MONTH', 'BIRTH_DAY']
+  - name: LNFNDOB
+    layout: ['LAST_NAME', 'FIRST_NAME', 'BIRTH_YEAR', 'BIRTH_MONTH', 'BIRTH_DAY']
+  - name: FNSSN
+    layout: ['FIRST_NAME', 'SSN']
+  - name: LNSSN
+    layout: ['LAST_NAME', 'SSN']
+  - name: DOBSSN
+    layout: ['BIRTH_YEAR', 'BIRTH_MONTH', 'BIRTH_DAY', 'SSN']
+  - name: SSN
+    layout: ['SSN']
+  - name: 3LFNLNDOB
+    layout: ['FIRST_3_FIRST_NAME', 'FIRST_3_LAST_NAME', 'BIRTH_YEAR', 'BIRTH_MONTH', 'BIRTH_DAY']
+  - name: 3LLNFNDOB
+    layout: ['FIRST_3_LAST_NAME', 'FIRST_3_FIRST_NAME', 'BIRTH_YEAR', 'BIRTH_MONTH', 'BIRTH_DAY']
+  - name: 3LFNLNBOD
+    layout: ['FIRST_3_FIRST_NAME', 'FIRST_3_LAST_NAME', 'BIRTH_YEAR', 'BIRTH_DAY', 'BIRTH_MONTH']
+  - name: 3LFNSSN
+    layout: ['FIRST_3_FIRST_NAME', 'SSN']
+  - name: 3LLNSSN
+    layout: ['FIRST_3_LAST_NAME', 'SSN']
+  - name: SXFNLNDOB
+    layout: ['SOUNDEX_FIRST_NAME', 'SOUNDEX_LAST_NAME', 'BIRTH_YEAR', 'BIRTH_MONTH', 'BIRTH_DAY']
+  - name: SXLNFNDOB
+    layout: ['SOUNDEX_LAST_NAME', 'SOUNDEX_FIRST_NAME', 'BIRTH_YEAR', 'BIRTH_MONTH', 'BIRTH_DAY']
+  - name: SXFNLNBOD
+    layout: ['SOUNDEX_FIRST_NAME', 'SOUNDEX_LAST_NAME', 'BIRTH_YEAR', 'BIRTH_DAY', 'BIRTH_MONTH']
+  - name: SXFNSSN
+    layout: ['SOUNDEX_FIRST_NAME', 'SSN']
+  - name: SXLNSSN
+    layout: ['SOUNDEX_LAST_NAME', 'SSN']
+
+pipelines:
+  - name: processName
+    steps: [{name: 'strip'}, {name: 'lowercase'}]
+  - name: processSSN
+    steps: [{name: 'strip'}]
+  - name: processNameSoundex
+    steps: [{name: 'strip'}, {name: 'lowercase'}, {name: 'soundex'}]
+  - name: processYear
+    steps: [{name: 'parseDate', options: {format: 'YYYY-MM-DD'}}, {name: year}]
+  - name: processMonth
+    steps: [{name: 'parseDate', options: {format: 'YYYY-MM-DD'}}, {name: month}]
+  - name: processDay
+    steps: [{name: 'parseDate', options: {format: 'YYYY-MM-DD'}}, {name: month}]
+
+mappings:
+  - source: first_name_field
+    pipeline: processName
+    target: FIRST_NAME
+  - source: last_name_field
+    pipeline: processName
+    target: LAST_NAME
+  - source: social_security_number_field
+    pipeline: processSSN
+    target: SSN
