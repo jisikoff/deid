@@ -23,8 +23,9 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.9.7")
     implementation( "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.7")
     implementation( "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.7")
-
-	testCompile("org.jetbrains.kotlin:kotlin-test")
+    implementation("org.apache.commons:commons-csv:1.6")
+    implementation("commons-codec:commons-codec:1.11")
+    testCompile("org.jetbrains.kotlin:kotlin-test")
 	testCompile("org.jetbrains.kotlin:kotlin-test-junit")
 }
 

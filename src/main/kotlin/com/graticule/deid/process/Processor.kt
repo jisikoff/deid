@@ -1,8 +1,8 @@
 package com.graticule.deid.process
 
 import com.graticule.deid.hash.ElementType
-import com.graticule.deid.hash.HashElement
 import com.graticule.deid.record.Record
+import org.apache.commons.codec.language.Soundex
 
 class Processor(val mappings: List<Mapping>, pipelines: List<Pipeline>) {
 
@@ -35,17 +35,40 @@ class Processor(val mappings: List<Mapping>, pipelines: List<Pipeline>) {
 
     fun doStep(input:StepResult, step: Step):StepResult {
         when (step.name) {
-            "processName" -> return testStep(input, step)
-            "strip" -> return testStep(input, step)
-            "parseDate" -> return testStep(input, step)
-            "lowercase" -> return testStep(input, step)
-            "soundex" -> return testStep(input, step)
-            else -> return testStep(input, step)
+            "processName" -> return processNameStep(input, step)
+            "strip" -> return stripStep(input, step)
+            "parseDate" -> return parseDateStep(input, step)
+            "lowercase" -> return lowercaseStep(input, step)
+            "soundex" -> return soundexStep(input, step)
+            "test" -> return testStep(input, step)
+            else -> return  unknownStep(input, step)
         }
     }
 
     fun testStep(input:StepResult, step: Step):StepResult {
         return StepResult(step, input.result + step.name, input.errors + StepError(step.name))
     }
+    fun unknownStep(input:StepResult, step: Step):StepResult {
+        return StepResult(step, input.result + step.name, input.errors + StepError("$step.name step not found"))
+    }
 
+    fun processNameStep(input:StepResult, step: Step):StepResult {
+        return StepResult(step, input.result, input.errors)
+    }
+
+    fun parseDateStep(input:StepResult, step: Step):StepResult {
+        return StepResult(step, input.result + step.name, input.errors + StepError("$step.name step not found"))
+    }
+
+    fun stripStep(input:StepResult, step: Step):StepResult {
+        val re = Regex("[^A-Za-z0-9 ]")
+        return StepResult(step, re.replace(input.result, ""), input.errors)
+    }
+    fun lowercaseStep(input:StepResult, step: Step):StepResult {
+        return StepResult(step, input.result.toLowerCase() + step.name, input.errors)
+    }
+    fun soundexStep(input:StepResult, step: Step):StepResult {
+        val soundex = Soundex()
+        return StepResult(step, soundex.encode(input.result), input.errors)
+    }
 }

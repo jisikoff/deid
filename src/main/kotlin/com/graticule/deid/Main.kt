@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.graticule.deid.hash.HashLayout
+import com.graticule.deid.hash.Hasher
 import com.graticule.deid.process.Processor
 import com.graticule.deid.record.Record
 import com.graticule.deid.record.RecordField
@@ -18,11 +19,14 @@ fun main(args : Array<String>) {
     val configErrors = validateConfig(config)
 
     val field = RecordField("first_name_field", "jeremy")
-    val record = Record("1", listOf(field))
+    val field2 = RecordField("social_security_number_field", "666-66-6666")
+    val record = Record("1", listOf(field, field2))
     val processor = Processor(config.mappings, config.pipelines)
-    val result = processor.processRecord(record)
-    println(result)
-
+    val results = processor.processRecord(record)
+    println("Mapping results $results")
+    val hasher = Hasher("salt", config.layouts)
+    val hashes = hasher.generateHashes(results)
+    println("Hashes $hashes")
 }
 
 fun loadConfig(path: Path): Config {
