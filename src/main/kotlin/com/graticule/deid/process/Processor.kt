@@ -3,6 +3,8 @@ package com.graticule.deid.process
 import com.graticule.deid.hash.ElementType
 import com.graticule.deid.record.Record
 import org.apache.commons.codec.language.Soundex
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class Processor(val mappings: List<Mapping>, pipelines: List<Pipeline>) {
 
@@ -30,14 +32,19 @@ class Processor(val mappings: List<Mapping>, pipelines: List<Pipeline>) {
             return MappingResult(mapping, finalResult.result, finalResult.errors + errors)
         }
 
-        return mappings.map{ doMapping(it) }
+        val mappings =  mappings.map{ doMapping(it) }
+        mappings.forEach{println(it)}
+        return mappings
     }
 
     fun doStep(input:StepResult, step: Step):StepResult {
         when (step.name) {
-            "processName" -> return processNameStep(input, step)
             "strip" -> return stripStep(input, step)
+            "first3letters" -> return first3LettersStep(input, step)
             "parseDate" -> return parseDateStep(input, step)
+            "year" -> return yearStep(input, step)
+            "month" -> return monthStep(input, step)
+            "day" -> return dayStep(input, step)
             "lowercase" -> return lowercaseStep(input, step)
             "soundex" -> return soundexStep(input, step)
             "test" -> return testStep(input, step)
@@ -49,15 +56,34 @@ class Processor(val mappings: List<Mapping>, pipelines: List<Pipeline>) {
         return StepResult(step, input.result + step.name, input.errors + StepError(step.name))
     }
     fun unknownStep(input:StepResult, step: Step):StepResult {
-        return StepResult(step, input.result + step.name, input.errors + StepError("$step.name step not found"))
+        return StepResult(step, input.result, input.errors + StepError("$step.name step not found"))
     }
 
-    fun processNameStep(input:StepResult, step: Step):StepResult {
-        return StepResult(step, input.result, input.errors)
+    fun first3LettersStep(input:StepResult, step: Step):StepResult {
+        return StepResult(step, input.result.substring(0,3), input.errors)
     }
 
     fun parseDateStep(input:StepResult, step: Step):StepResult {
-        return StepResult(step, input.result + step.name, input.errors + StepError("$step.name step not found"))
+        val defaultFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+
+        val formatOption = step.options.get("format")
+        val inputFormatter =  if (formatOption == null)  defaultFormatter else  DateTimeFormatter.ofPattern(formatOption as String)
+
+        val parsed = LocalDate.parse(input.result, inputFormatter)
+
+        return StepResult(step, parsed.format(defaultFormatter), input.errors)
+    }
+
+    fun yearStep(input:StepResult, step: Step):StepResult {
+        return StepResult(step, input.result.substring(0,4), input.errors)
+    }
+
+    fun monthStep(input:StepResult, step: Step):StepResult {
+        return StepResult(step, input.result.substring(4,6), input.errors)
+    }
+
+    fun dayStep(input:StepResult, step: Step):StepResult {
+        return StepResult(step, input.result.substring(6,8), input.errors)
     }
 
     fun stripStep(input:StepResult, step: Step):StepResult {
@@ -65,7 +91,7 @@ class Processor(val mappings: List<Mapping>, pipelines: List<Pipeline>) {
         return StepResult(step, re.replace(input.result, ""), input.errors)
     }
     fun lowercaseStep(input:StepResult, step: Step):StepResult {
-        return StepResult(step, input.result.toLowerCase() + step.name, input.errors)
+        return StepResult(step, input.result.toLowerCase(), input.errors)
     }
     fun soundexStep(input:StepResult, step: Step):StepResult {
         val soundex = Soundex()

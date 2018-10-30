@@ -19,14 +19,16 @@ fun main(args : Array<String>) {
     val configErrors = validateConfig(config)
 
     val field = RecordField("first_name_field", "jeremy")
-    val field2 = RecordField("social_security_number_field", "666-66-6666")
-    val record = Record("1", listOf(field, field2))
+    val field2 = RecordField("last_name_field", "lastly")
+    val field3 = RecordField("social_security_number_field", "666-66-6666")
+    val field4 = RecordField("dob", "1971-05-29")
+    val record = Record("1", listOf(field, field2, field3, field4))
     val processor = Processor(config.mappings, config.pipelines)
     val results = processor.processRecord(record)
     println("Mapping results $results")
     val hasher = Hasher("salt", config.layouts)
     val hashes = hasher.generateHashes(results)
-    println("Hashes $hashes")
+    hashes.forEach { println("Hash: ${it.name}:${it.value} errors: ${it.errors}") }
 }
 
 fun loadConfig(path: Path): Config {

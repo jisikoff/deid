@@ -13,7 +13,9 @@ class Hasher(val salt: String, val layouts: List<HashLayout>) {
     fun generateHashes(mappingResults: List<MappingResult>):List<HashResult> {
         val elementMap:Map<ElementType, String> = mappingResults.filter {it.errors.isEmpty()}.associateBy ({it.mapping.target}, {it.result})
 
-        return layouts.map{ layoutHashInput(it, elementMap)}.map{ doHash(it)}
+        val hashInputs = layouts.map{ layoutHashInput(it, elementMap)}
+        hashInputs.forEach{ println("Hash inputs: ${it.name} - ${it.value} errors: ${it.errors}")}
+        return hashInputs.map{ doHash(it)}
     }
 
     fun layoutHashInput(layout: HashLayout, elementMap: Map<ElementType, String>) :HashInput {
