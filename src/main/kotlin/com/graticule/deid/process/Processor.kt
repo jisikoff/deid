@@ -38,63 +38,7 @@ class Processor(val mappings: List<Mapping>, pipelines: List<Pipeline>) {
     }
 
     fun doStep(input:StepResult, step: Step):StepResult {
-        when (step.name) {
-            "strip" -> return stripStep(input, step)
-            "first3letters" -> return first3LettersStep(input, step)
-            "parseDate" -> return parseDateStep(input, step)
-            "year" -> return yearStep(input, step)
-            "month" -> return monthStep(input, step)
-            "day" -> return dayStep(input, step)
-            "lowercase" -> return lowercaseStep(input, step)
-            "soundex" -> return soundexStep(input, step)
-            "test" -> return testStep(input, step)
-            else -> return  unknownStep(input, step)
-        }
-    }
-
-    fun testStep(input:StepResult, step: Step):StepResult {
-        return StepResult(step, input.result + step.name, input.errors + StepError(step.name))
-    }
-    fun unknownStep(input:StepResult, step: Step):StepResult {
-        return StepResult(step, input.result, input.errors + StepError("$step.name step not found"))
-    }
-
-    fun first3LettersStep(input:StepResult, step: Step):StepResult {
-        return StepResult(step, input.result.substring(0,3), input.errors)
-    }
-
-    fun parseDateStep(input:StepResult, step: Step):StepResult {
-        val defaultFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
-
-        val formatOption = step.options.get("format")
-        val inputFormatter =  if (formatOption == null)  defaultFormatter else  DateTimeFormatter.ofPattern(formatOption as String)
-
-        val parsed = LocalDate.parse(input.result, inputFormatter)
-
-        return StepResult(step, parsed.format(defaultFormatter), input.errors)
-    }
-
-    fun yearStep(input:StepResult, step: Step):StepResult {
-        return StepResult(step, input.result.substring(0,4), input.errors)
-    }
-
-    fun monthStep(input:StepResult, step: Step):StepResult {
-        return StepResult(step, input.result.substring(4,6), input.errors)
-    }
-
-    fun dayStep(input:StepResult, step: Step):StepResult {
-        return StepResult(step, input.result.substring(6,8), input.errors)
-    }
-
-    fun stripStep(input:StepResult, step: Step):StepResult {
-        val re = Regex("[^A-Za-z0-9 ]")
-        return StepResult(step, re.replace(input.result, ""), input.errors)
-    }
-    fun lowercaseStep(input:StepResult, step: Step):StepResult {
-        return StepResult(step, input.result.toLowerCase(), input.errors)
-    }
-    fun soundexStep(input:StepResult, step: Step):StepResult {
-        val soundex = Soundex()
-        return StepResult(step, soundex.encode(input.result), input.errors)
+        val stepFunction = Steps.lookupStepFunction(step.name)
+        return stepFunction(input, step)
     }
 }
