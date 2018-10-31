@@ -11,6 +11,7 @@ import com.graticule.deid.record.RecordField
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.system.measureTimeMillis
 
 fun main(args : Array<String>) {
     println("Hello, world! KTS")
@@ -25,10 +26,19 @@ fun main(args : Array<String>) {
     val record = Record("1", listOf(field, field2, field3, field4))
     val processor = Processor(config.mappings, config.pipelines)
     val results = processor.processRecord(record)
+
+
     println("Mapping results $results")
     val hasher = Hasher("salt", config.layouts)
     val hashes = hasher.generateHashes(results)
+
+    val time = measureTimeMillis {
+        repeat(100000) {
+            hasher.generateHashes(results)
+        }
+    }
     hashes.forEach { println("Hash: ${it.name}:${it.value} errors: ${it.errors}") }
+    println("time $time")
 }
 
 fun loadConfig(path: Path): Config {

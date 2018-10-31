@@ -36,7 +36,7 @@ pipelines:
   - name: processName
     steps: [{name: 'strip'}, {name: 'lowercase'}]
   - name: processNameFirst3
-    steps: [{name: 'strip'}, {name: 'lowercase'}, {name: 'first3letters'}]
+    steps: [{name: 'strip'}, {name: 'lowercase'}, {name: 'first3Letters'}]
   - name: processSSN
     steps: [{name: 'strip'}]
   - name: processNameSoundex

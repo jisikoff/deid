@@ -1,10 +1,6 @@
 package com.graticule.deid.process
 
-import com.graticule.deid.hash.ElementType
 import com.graticule.deid.record.Record
-import org.apache.commons.codec.language.Soundex
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class Processor(val mappings: List<Mapping>, pipelines: List<Pipeline>) {
 
@@ -27,7 +23,7 @@ class Processor(val mappings: List<Mapping>, pipelines: List<Pipeline>) {
 
             val steps = pipelinesMap.getValue(mapping.pipeline).steps
 
-            val startStep = StepResult(Step("start"), sourceValue)
+            val startStep = StepResult(StepConfig("start"), sourceValue)
             val finalResult = steps.fold(startStep, ::doStep)
             return MappingResult(mapping, finalResult.result, finalResult.errors + errors)
         }
@@ -37,8 +33,8 @@ class Processor(val mappings: List<Mapping>, pipelines: List<Pipeline>) {
         return mappings
     }
 
-    fun doStep(input:StepResult, step: Step):StepResult {
-        val stepFunction = Steps.lookupStepFunction(step.name)
-        return stepFunction(input, step)
+    fun doStep(input:StepResult, step: StepConfig):StepResult {
+        val stepFunction = Steps.lookup(step.name)
+        return stepFunction.run(input, step)
     }
 }
