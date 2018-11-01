@@ -14,7 +14,7 @@ class Hasher(val salt: String, val layouts: List<HashLayout>) {
         val elementMap:Map<ElementType, String> = mappingResults.filter {it.errors.isEmpty()}.associateBy ({it.mapping.target}, {it.result})
 
         val hashInputs = layouts.map{ layoutHashInput(it, elementMap)}
-        hashInputs.forEach{ println("Hash inputs: ${it.name} - ${it.value} errors: ${it.errors}")}
+        //hashInputs.forEach{ println("Hash inputs: ${it.name} - ${it.value} errors: ${it.errors}")}
         return hashInputs.map{ doHash(it)}
     }
 

@@ -42,33 +42,33 @@ pipelines:
   - name: processNameSoundex
     steps: [{name: 'strip'}, {name: 'lowercase'}, {name: 'soundex'}]
   - name: processYear
-    steps: [{name: 'parseDate', options: {format: 'yyyy-MM-dd'}}, {name: year}]
+    steps: [{name: 'parseDate', options: {format: 'yyyyMMdd'}}, {name: year}]
   - name: processMonth
-    steps: [{name: 'parseDate', options: {format: 'yyyy-MM-dd'}}, {name: month}]
+    steps: [{name: 'parseDate', options: {format: 'yyyyMMdd'}}, {name: month}]
   - name: processDay
-    steps: [{name: 'parseDate', options: {format: 'yyyy-MM-dd'}}, {name: day}]
+    steps: [{name: 'parseDate', options: {format: 'yyyyMMdd'}}, {name: day}]
 
 #TODO mapping should get pipeline directly, its easier
 mappings:
-  - source: first_name_field
+  - source: first_name
     pipeline: processName
     target: FIRST_NAME
-  - source: first_name_field
+  - source: first_name
     pipeline: processNameFirst3
     target: FIRST_3_FIRST_NAME
-  - source: last_name_field
+  - source: last_name
     pipeline: processNameFirst3
     target: FIRST_3_LAST_NAME
-  - source: first_name_field
+  - source: first_name
     pipeline: processNameSoundex
     target: SOUNDEX_FIRST_NAME
-  - source: last_name_field
+  - source: last_name
     pipeline: processNameSoundex
     target: SOUNDEX_LAST_NAME
-  - source: last_name_field
+  - source: last_name
     pipeline: processName
     target: LAST_NAME
-  - source: social_security_number_field
+  - source: ssn
     pipeline: processSSN
     target: SSN
   - source: dob

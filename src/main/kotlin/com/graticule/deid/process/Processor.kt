@@ -8,7 +8,7 @@ class Processor(val mappings: List<Mapping>, pipelines: List<Pipeline>) {
 
 
     fun processRecord(record: Record):List<MappingResult> {
-      val fieldMap:Map<String, String> = record.fields.associateBy ({it.name}, {it.value})
+      val fieldMap = record.fieldMap
 
         fun doMapping(mapping: Mapping):MappingResult{
             var errors = listOf<MappingError>()
@@ -29,7 +29,7 @@ class Processor(val mappings: List<Mapping>, pipelines: List<Pipeline>) {
         }
 
         val mappings =  mappings.map{ doMapping(it) }
-        mappings.forEach{println(it)}
+        //mappings.forEach{println(it)}
         return mappings
     }
 

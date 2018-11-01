@@ -1,6 +1,8 @@
 package com.graticule.deid.process
 
 import org.apache.commons.codec.language.Soundex
+import java.lang.Exception
+import java.time.DateTimeException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -38,39 +40,64 @@ object UnknownStep:Step {
 
 object First3LettersStep:Step {
     override fun run(input: StepResult, step: StepConfig): StepResult {
-        return StepResult(step, input.result.substring(0, 3), input.errors)
+        var errors = listOf<StepError>()
+        val first3 = if(input.result.length < 3) {
+            errors += StepError("String value ${input.result} too short to get 3 letters from")
+            ""
+        } else input.result.substring(0, 3)
+        return StepResult(step, first3, input.errors + errors)
     }
 }
 
-object ParseDateStep:Step {
+object ParseDateStep : Step {
     val defaultFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
 
     override fun run(input: StepResult, step: StepConfig): StepResult {
 
+        var errors = listOf<StepError>()
         val formatOption = step.options.get("format")
         val inputFormatter = if (formatOption == null) defaultFormatter else DateTimeFormatter.ofPattern(formatOption as String)
 
-        val parsed = LocalDate.parse(input.result, inputFormatter)
-
-        return StepResult(step, parsed.format(defaultFormatter), input.errors)
+        val formatted = try {
+            LocalDate.parse(input.result, inputFormatter).format(defaultFormatter)
+        } catch (ex: DateTimeException) {
+            errors += StepError("LocalDate.parse failed: ${ex.message}")
+            "" //bad date
+        }
+        return StepResult(step, formatted, input.errors + errors)
     }
 }
 
 object YearStep:Step {
     override fun run(input: StepResult, step: StepConfig): StepResult {
-        return StepResult(step, input.result.substring(0, 4), input.errors)
+        var errors = listOf<StepError>()
+        val year = if(input.result.length < 4) {
+            errors += StepError("Date value ${input.result} too short to get a valid year from")
+            ""
+        } else input.result.substring(0, 4)
+        return StepResult(step, year, input.errors + errors)
     }
 }
 
 object MonthStep:Step {
     override fun run(input: StepResult, step: StepConfig): StepResult {
-        return StepResult(step, input.result.substring(4, 6), input.errors)
+        var errors = listOf<StepError>()
+        val month = if(input.result.length < 6) {
+            errors += StepError("Date value ${input.result} too short to get a valid month from")
+            ""
+        } else input.result.substring(4, 6)
+        return StepResult(step, month, input.errors + errors)
     }
 }
 
 object DayStep:Step {
     override fun run(input: StepResult, step: StepConfig): StepResult {
-        return StepResult(step, input.result.substring(6, 8), input.errors)
+        var errors = listOf<StepError>()
+        val day = if(input.result.length < 8) {
+            errors += StepError("Value ${input.result} too short to get a valid day from")
+            ""
+        } else input.result.substring(6, 8)
+        return StepResult(step, day, input.errors + errors)
     }
 }
 
