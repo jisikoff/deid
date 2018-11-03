@@ -21,10 +21,10 @@ class Processor(val mappings: List<Mapping>, pipelines: List<Pipeline>) {
             if(!pipelinesMap.containsKey(mapping.pipeline))
                 throw Exception("Pipeline ${mapping.pipeline} not found")
 
-            val steps = pipelinesMap.getValue(mapping.pipeline).steps
+            val stepConfigs = pipelinesMap.getValue(mapping.pipeline).steps
 
-            val startStep = StepResult(StepConfig("start"), sourceValue)
-            val finalResult = steps.fold(startStep, ::doStep)
+            val startValue = StepResult(sourceValue)
+            val finalResult = stepConfigs.fold(startValue, ::doStep)
             return MappingResult(mapping, finalResult.result, finalResult.errors + errors)
         }
 
@@ -33,8 +33,8 @@ class Processor(val mappings: List<Mapping>, pipelines: List<Pipeline>) {
         return mappings
     }
 
-    fun doStep(input:StepResult, step: StepConfig):StepResult {
-        val stepFunction = Steps.lookup(step.name)
-        return stepFunction.run(input, step)
+    fun doStep(input:StepResult, stepConfig: StepConfig):StepResult {
+        val step = Steps.lookup(stepConfig.name)
+        return step.run(input, stepConfig)
     }
 }

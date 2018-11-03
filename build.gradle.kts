@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val deid_version: String by project
 
@@ -25,8 +26,20 @@ dependencies {
     implementation( "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.7")
     implementation("org.apache.commons:commons-csv:1.6")
     implementation("commons-codec:commons-codec:1.11")
-    testCompile("org.jetbrains.kotlin:kotlin-test")
-	testCompile("org.jetbrains.kotlin:kotlin-test-junit")
+    implementation("ch.qos.logback:logback-core:1.2.3")
+    implementation("ch.qos.logback:logback-classic:1.2.3")
+    testCompile ("io.kotlintest:kotlintest-runner-junit5:3.1.8")
+    testCompile ("com.nhaarman:mockito-kotlin:1.6.0")
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+val test by tasks.getting(Test::class) {
+    useJUnitPlatform { }
 }
 
 application {
