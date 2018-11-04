@@ -1,3 +1,3 @@
 package com.graticule.deid
 
-data class ConfigError(val message:String)
+data class ConfigError(val message: String)

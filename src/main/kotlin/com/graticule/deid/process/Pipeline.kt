@@ -1,3 +1,3 @@
 package com.graticule.deid.process
 
-data class Pipeline(val name:String, val steps:List<StepConfig>)
+data class Pipeline(val name: String, val steps: List<StepConfig>)

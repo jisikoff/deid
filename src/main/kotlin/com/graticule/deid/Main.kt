@@ -15,12 +15,12 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 //TODO warning that error files contain PII and must be safely handled
-fun main(args : Array<String>) {
+fun main(args: Array<String>) {
     println("Generating hashes for records...")
 
     //load and validate the config
     val configPath = Config::class.java.getResource("/config.yml").path
-    val config = loadConfig( Paths.get(configPath))
+    val config = loadConfig(Paths.get(configPath))
     val configErrors = validateConfig(config)
 
     //read the file
@@ -39,16 +39,16 @@ fun main(args : Array<String>) {
         val hasher = Hasher("salt", config.layouts)
         val hashes = hasher.generateHashes(results)
 
-        if(results.any{ processResult -> !processResult.errors.isEmpty() }){
+        if (results.any { processResult -> !processResult.errors.isEmpty() }) {
             println("Record ${it.recordNumber} failed to produce all needed fields:")
-            results.filter{ result -> !result.errors.isEmpty()}.forEach{
+            results.filter { result -> !result.errors.isEmpty() }.forEach {
                 println("${it.mapping.target} : ${it.errors}")
             }
         }
 
-        if(hashes.any{ hashResult -> !hashResult.errors.isEmpty() }){
+        if (hashes.any { hashResult -> !hashResult.errors.isEmpty() }) {
             println("Record ${it.recordNumber} failed to produce all hashes:")
-            hashes.filter{ hash -> !hash.errors.isEmpty()}.forEach{
+            hashes.filter { hash -> !hash.errors.isEmpty() }.forEach {
                 println("${it.name} : ${it.errors}")
             }
         }
@@ -56,8 +56,6 @@ fun main(args : Array<String>) {
         //hashes.forEach { println("Hash: ${it.name}:${it.value} errors: ${it.errors}") }
     }
 }
-
-
 
 
 //Config loading and validating TODO:Move me out of here
@@ -70,18 +68,18 @@ fun loadConfig(path: Path): Config {
     }
 }
 
-fun validateConfig(config: Config):List<ConfigError> {
+fun validateConfig(config: Config): List<ConfigError> {
     return validateLayouts(config.layouts) //+ validateMappings(config.mappings)
 }
 
-fun validateLayouts(layouts: List<HashLayout>):List<ConfigError> {
+fun validateLayouts(layouts: List<HashLayout>): List<ConfigError> {
 
-    fun validateUniqueLayoutNames():List<ConfigError>{
-        return layouts.groupingBy { it.name }.eachCount().filter { it.value > 1 }.map { ConfigError("Layout name ${it.key} is not unique")}
+    fun validateUniqueLayoutNames(): List<ConfigError> {
+        return layouts.groupingBy { it.name }.eachCount().filter { it.value > 1 }.map { ConfigError("Layout name ${it.key} is not unique") }
     }
 
-    fun validateUniqueLayoutPatterns():List<ConfigError>{
-        return layouts.groupingBy { it.layout }.eachCount().filter { it.value > 1 }.map { ConfigError("Layout pattern ${it.key} is not unique")}
+    fun validateUniqueLayoutPatterns(): List<ConfigError> {
+        return layouts.groupingBy { it.layout }.eachCount().filter { it.value > 1 }.map { ConfigError("Layout pattern ${it.key} is not unique") }
     }
 
     return validateUniqueLayoutNames() + validateUniqueLayoutPatterns()

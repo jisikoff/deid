@@ -20,28 +20,28 @@ open class Steps {
                 "test" to TestStep,
                 "unknown" to UnknownStep)
 
-        fun lookup(name: String):Step {
+        fun lookup(name: String): Step {
             return stepMap.getOrDefault(name, "unknown") as Step
         }
     }
 }
 
-object TestStep:Step {
+object TestStep : Step {
     override fun run(input: StepResult, stepConfig: StepConfig): StepResult {
         return StepResult(input.result + stepConfig.name, input.errors + StepError(stepConfig.name))
     }
 }
 
-object UnknownStep:Step {
-    override fun run(input:StepResult, stepConfig: StepConfig):StepResult {
+object UnknownStep : Step {
+    override fun run(input: StepResult, stepConfig: StepConfig): StepResult {
         return StepResult(input.result, input.errors + StepError("$stepConfig.name step not found"))
     }
 }
 
-object First3LettersStep:Step {
+object First3LettersStep : Step {
     override fun run(input: StepResult, stepConfig: StepConfig): StepResult {
         var errors = listOf<StepError>()
-        val first3 = if(input.result.length < 3) {
+        val first3 = if (input.result.length < 3) {
             errors += StepError("String value ${input.result} too short to get 3 letters from")
             ""
         } else input.result.substring(0, 3)
@@ -68,21 +68,21 @@ object ParseDateStep : Step {
     }
 }
 
-object YearStep:Step {
+object YearStep : Step {
     override fun run(input: StepResult, stepConfig: StepConfig): StepResult {
         var errors = listOf<StepError>()
-        val year = if(input.result.length < 4) {
+        val year = if (input.result.length < 4) {
             errors += StepError("Date value ${input.result} too short to get a valid year from")
             ""
         } else input.result.substring(0, 4)
-        return StepResult( year, input.errors + errors)
+        return StepResult(year, input.errors + errors)
     }
 }
 
-object MonthStep:Step {
+object MonthStep : Step {
     override fun run(input: StepResult, stepConfig: StepConfig): StepResult {
         var errors = listOf<StepError>()
-        val month = if(input.result.length < 6) {
+        val month = if (input.result.length < 6) {
             errors += StepError("Date value ${input.result} too short to get a valid month from")
             ""
         } else input.result.substring(4, 6)
@@ -90,10 +90,10 @@ object MonthStep:Step {
     }
 }
 
-object DayStep:Step {
+object DayStep : Step {
     override fun run(input: StepResult, stepConfig: StepConfig): StepResult {
         var errors = listOf<StepError>()
-        val day = if(input.result.length < 8) {
+        val day = if (input.result.length < 8) {
             errors += StepError("Value ${input.result} too short to get a valid day from")
             ""
         } else input.result.substring(6, 8)
@@ -101,20 +101,20 @@ object DayStep:Step {
     }
 }
 
-object StripStep:Step {
+object StripStep : Step {
     val re = Regex("[^A-Za-z0-9 ]")
     override fun run(input: StepResult, stepConfig: StepConfig): StepResult {
-        return StepResult( re.replace(input.result, ""), input.errors)
+        return StepResult(re.replace(input.result, ""), input.errors)
     }
 }
 
-object LowercaseStep:Step {
+object LowercaseStep : Step {
     override fun run(input: StepResult, stepConfig: StepConfig): StepResult {
         return StepResult(input.result.toLowerCase(), input.errors)
     }
 }
 
-object SoundexStep:Step {
+object SoundexStep : Step {
     val soundex = Soundex()
     override fun run(input: StepResult, stepConfig: StepConfig): StepResult {
         return StepResult(soundex.encode(input.result), input.errors)

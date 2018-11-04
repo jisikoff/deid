@@ -10,20 +10,20 @@ import java.util.*
 //TODO hash algorithm which?
 class Hasher(val salt: String, val layouts: List<HashLayout>) {
 
-    fun generateHashes(mappingResults: List<MappingResult>):List<HashResult> {
-        val elementMap:Map<ElementType, String> = mappingResults.filter {it.errors.isEmpty()}.associateBy ({it.mapping.target}, {it.result})
+    fun generateHashes(mappingResults: List<MappingResult>): List<HashResult> {
+        val elementMap: Map<ElementType, String> = mappingResults.filter { it.errors.isEmpty() }.associateBy({ it.mapping.target }, { it.result })
 
-        val hashInputs = layouts.map{ layoutHashInput(it, elementMap)}
+        val hashInputs = layouts.map { layoutHashInput(it, elementMap) }
         //hashInputs.forEach{ println("Hash inputs: ${it.name} - ${it.value} errors: ${it.errors}")}
-        return hashInputs.map{ doHash(it)}
+        return hashInputs.map { doHash(it) }
     }
 
-    fun layoutHashInput(layout: HashLayout, elementMap: Map<ElementType, String>) :HashInput {
+    fun layoutHashInput(layout: HashLayout, elementMap: Map<ElementType, String>): HashInput {
 
         val hashInput = layout.layout.fold(HashInput(layout.name, "")) { acc: HashInput, elementType: ElementType ->
             var errors = listOf<HashError>()
 
-            if(!elementMap.containsKey(elementType))
+            if (!elementMap.containsKey(elementType))
                 errors += HashError("Hash ${acc.name} requires missing elementType ${elementType}")
 
             val elementValue: String = elementMap.get(elementType) ?: ""
@@ -34,10 +34,10 @@ class Hasher(val salt: String, val layouts: List<HashLayout>) {
         return hashInput
     }
 
-    fun doHash(hashInput: HashInput):HashResult {
+    fun doHash(hashInput: HashInput): HashResult {
         var hashResultValue = ""
 
-        if(hashInput.errors.isEmpty()) {
+        if (hashInput.errors.isEmpty()) {
             val md = MessageDigest.getInstance("SHA-512")
             md.update(salt.toByteArray(Charsets.UTF_8) + hashInput.value.toByteArray(Charsets.UTF_8))
             val aMessageDigest = md.digest()
