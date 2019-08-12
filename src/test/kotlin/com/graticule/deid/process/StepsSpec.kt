@@ -2,17 +2,12 @@ package com.graticule.deid.process
 
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
-import com.graticule.deid.hash.ElementType.*
 import io.kotlintest.data.forall
-import io.kotlintest.forAll
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.forAll
-import io.kotlintest.tables.headers
 import io.kotlintest.tables.row
-import io.kotlintest.tables.table
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 class StepsSpec : StringSpec() {
@@ -62,14 +57,12 @@ class StepsSpec : StringSpec() {
             }
         }
 
-        "ParseDateStep should return date normalized into yyyyMMdd for random dates" {
+        "ParseDateStep should return date normalized into yyyyMMdd for random valid dates" {
             val localDateGen: Gen<LocalDate> = BoundedLocalDateGen(LocalDate.of(1800,1,1 ), LocalDate.of(9999, 12,31)) //Years are 4 digits
             val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
             forAll(1000, localDateGen) { localDateIn->
-                println(localDateIn)
                 val stepResult = ParseDateStep.run(StepResult(inputFormatter.format(localDateIn)), StepConfig("StartDateStep", mapOf("format" to "yyyy-MM-dd") ))
-
                 stepResult.result == inputFormatter.format(localDateIn).replace("-","")
                         && stepResult.errors.size == 0
             }
@@ -81,7 +74,6 @@ class StepsSpec : StringSpec() {
         override fun constants() = listOf<String>(" ".repeat(minLength), " ".repeat(maxLength))
         override fun random() = generateSequence { Gen.string().nextPrintableString(ThreadLocalRandom.current().nextInt(minLength, maxLength))}
     }
-
 
     class BoundedLocalDateGen(minLocalDate: LocalDate, maxLocalDate: LocalDate) : Gen<LocalDate> {
         val minDay = minLocalDate.toEpochDay()

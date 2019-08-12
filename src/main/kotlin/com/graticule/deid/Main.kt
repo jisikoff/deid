@@ -53,7 +53,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        //hashes.forEach { println("Hash: ${it.name}:${it.value} errors: ${it.errors}") }
+        hashes.forEach { println("Hash: ${it.name}:${it.value} errors: ${it.errors}") }
     }
 }
 
